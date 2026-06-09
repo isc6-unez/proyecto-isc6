@@ -1,1 +1,0 @@
-# proyecto-isc6

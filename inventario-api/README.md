@@ -1,1 +1,1 @@
-# Módulo 1 - DDA (.NET/C#)
+# Módulo de Inventario (.NET / C#)

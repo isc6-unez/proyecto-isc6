@@ -1,1 +1,1 @@
-# Módulo 1 - QR Service (Node.js)
+# Servicio de Códigos QR (Node.js)

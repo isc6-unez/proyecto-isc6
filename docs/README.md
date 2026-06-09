@@ -1,1 +1,1 @@
-# Documentación General - Módulo 2
+# Documentación General del Proyecto

@@ -1,20 +1,22 @@
-# ── Python (Módulo 3) ──────────────────────────────────────────────
+# Python (Módulo 3)
 venv/
+.venv
 __pycache__/
 *.pyc
-*.pyo
- 
-# ── Node.js (Microservicio QR - Módulo 1) ──────────────────────────
+
+# Node.js (Módulo QR)
 node_modules/
-npm-debug.log*
- 
-# ── .NET / C# (Módulo 1) ───────────────────────────────────────────
-bin/
-obj/
-*.user
-*.suo
- 
-# ── Variables de entorno (NUNCA subir al repo) ──────────────────────
+npm-debug.log
+
+# Variables de entorno y llaves
 .env
-*.env.local
-appsettings.Development.json
+*.local
+*.pem
+
+# IDEs
+.vscode/
+.idea/
+
+# Sistema Operativo
+.DS_Store
+Thumbs.db
