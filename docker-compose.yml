@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  # Base de datos PostgreSQL con PostGIS (para pruebas locales)
+  postgres:
+    image: postgis/postgis:16-3.4
+    container_name: postgres_industrial
+    environment:
+      POSTGRES_DB: sistema_industrial
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - red_industrial
+
+  # Módulo 1 - Inventario (.NET)
+  inventario-api:
+    build: ./inventario-api
+    container_name: inventario_api
+    ports:
+      - "5000:5000"
+    environment:
+      - DB_HOST=postgres
+      - DB_USER=dda_user
+      - DB_PASSWORD=secret
+      - DB_NAME=sistema_industrial
+    depends_on:
+      - postgres
+    networks:
+      - red_industrial
+
+  # Módulo 3 - Logística (Python)
+  logistica-api:
+    build: ./logistica-api
+    container_name: logistica_api
+    ports:
+      - "5001:5001"
+    environment:
+      - DB_HOST=postgres
+      - DB_USER=dpt_user
+      - DB_PASSWORD=secret
+      - DB_NAME=sistema_industrial
+    depends_on:
+      - postgres
+    networks:
+      - red_industrial
+
+  # Microservicio QR (Node.js)
+  trazabilidad-qr:
+    build: ./trazabilidad-qr
+    container_name: trazabilidad_qr
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_HOST=postgres
+      - DB_USER=qr_user
+      - DB_PASSWORD=secret
+      - DB_NAME=sistema_industrial
+    depends_on:
+      - postgres
+    networks:
+      - red_industrial
+
+volumes:
+  pgdata:
+
+networks:
+  red_industrial:

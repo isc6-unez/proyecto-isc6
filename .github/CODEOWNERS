@@ -1,0 +1,18 @@
+# Propietarios por defecto (Scrum Master)
+* @isc6-unez/modulo-2_scrum-master
+
+# Módulo 1 - DDA (Inventario)
+/inventario-api/ @isc6-unez/modulo-1_dda-inventario
+/inventario-api/** @isc6-unez/modulo-1_dda-inventario
+
+# Módulo 3 - DPT (Logística)
+/logistica-api/ @isc6-unez/modulo-3_dpt-logistica
+/logistica-api/** @isc6-unez/modulo-3_dpt-logistica
+
+# Microservicio QR (PROPIEDAD COMPARTIDA entre DDA y DPT)
+/trazabilidad-qr/ @isc6-unez/modulo-1_dda-inventario @isc6-unez/modulo-3_dpt-logistica
+/trazabilidad-qr/** @isc6-unez/modulo-1_dda-inventario @isc6-unez/modulo-3_dpt-logistica
+
+# Archivos sensibles de la raíz (solo Scrum Master)
+/docker-compose.yml @isc6-unez/modulo-2_scrum-master
+/.github/ @isc6-unez/modulo-2_scrum-master
