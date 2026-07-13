@@ -4,7 +4,7 @@ class Vehiculo:
             id_vehiculo: int,
             placas: str,
             modelo: str,
-            capacidad_maxima: str,
+            capacidad_maxima: float,
             tipo_vehiculo: str,
             estado: str
 
