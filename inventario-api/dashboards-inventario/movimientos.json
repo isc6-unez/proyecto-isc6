@@ -1,0 +1,47 @@
+[
+  {
+    "id_movimiento": "MOV-101",
+    "id_material": "MP-001",
+    "material": "Planchas de Acero Inoxidable",
+    "tipo": "Entrada",
+    "cantidad": 50,
+    "fecha": "2026-07-01",
+    "qr_codigo": "DDA-LOTE-2026A-001"
+  },
+  {
+    "id_movimiento": "MOV-102",
+    "id_material": "MP-002",
+    "material": "Tornillos de Alta Resistencia 2 pulgadas",
+    "tipo": "Salida",
+    "cantidad": 5,
+    "fecha": "2026-07-02",
+    "qr_codigo": "DDA-LOTE-2026A-002"
+  },
+  {
+    "id_movimiento": "MOV-103",
+    "id_material": "MP-003",
+    "material": "Pintura Epóxica Gris",
+    "tipo": "Entrada",
+    "cantidad": 20,
+    "fecha": "2026-07-03",
+    "qr_codigo": "DDA-LOTE-2026A-003"
+  },
+  {
+    "id_movimiento": "MOV-104",
+    "id_material": "MP-002",
+    "material": "Tornillos de Alta Resistencia 2 pulgadas",
+    "tipo": "Entrada",
+    "cantidad": 100,
+    "fecha": "2026-07-04",
+    "qr_codigo": "DDA-LOTE-2026A-002"
+  },
+  {
+    "id_movimiento": "MOV-105",
+    "id_material": "MP-005",
+    "material": "Resina Poliéster Industrial",
+    "tipo": "Salida",
+    "cantidad": 15,
+    "fecha": "2026-07-05",
+    "qr_codigo": "DDA-LOTE-2026A-005"
+  }
+]

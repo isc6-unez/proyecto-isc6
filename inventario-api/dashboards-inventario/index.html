@@ -2,9 +2,121 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboards de Inventario</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DDA - Dashboard de Existencias</title>
+    <!-- Bootstrap original corregido para el diseño visual de la interfaz -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        /* Estilo personalizado para resaltar las alertas de stock bajo */
+        .alerta-stock { background-color: #f8d7da !important; color: #842029; font-weight: bold; }
+    </style>
 </head>
 <body>
-    <h1>Módulo de Inventario - Fase 4: Dashboards</h1>
+
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2> Almacén de Materias Primas (Fase 4)</h2>
+            <span class="badge bg-success fs-6">Tiempo Real (Simulado)</span>
+        </div>
+
+        <!-- Tarjetas de Resumen Rápido -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card text-white bg-primary mb-3 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Categorías</h5>
+                        <p class="card-text fs-3" id="total-categorias">0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-danger mb-3 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Alertas de Stock Bajo</h5>
+                        <p class="card-text fs-3" id="total-alertas">0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Buscador en tiempo real instalado -->
+        <div class="mb-4">
+            <input type="text" id="buscador" class="form-control form-control-lg shadow-sm" placeholder=" Buscar materia prima por nombre o categoría...">
+        </div>
+
+        <!-- Tabla de Existencias -->
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID Material</th>
+                            <th>Nombre</th>
+                            <th>Categoría</th>
+                            <th>Stock Actual</th>
+                            <th>Stock Mínimo</th>
+                            <th>Unidad</th>
+                            <th>Código QR Asociado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-materiales">
+                        <!-- Los datos del archivo JSON se inyectan aquí automáticamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // 1. Cargar y renderizar los datos mapeados con PostgreSQL
+    fetch('materias_primas.json')
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.getElementById('tabla-materiales');
+            let alertas = 0;
+            const categorias = new Set();
+
+            data.forEach(material => {
+                // Contabilizar categorías por ID o Nombre
+                categorias.add(material.nombre_categoria);
+                
+                // Validar si el stock actual está por debajo del límite mínimo
+                const esAlerta = Number(material.stock_actual) < Number(material.stock_minimo);
+                if(esAlerta) alertas++;
+
+                // Crear fila de la tabla
+                const fila = document.createElement('tr');
+                if(esAlerta) fila.classList.add('alerta-stock');
+
+                fila.innerHTML = `
+                    <td><code>MP-${material.id_material}</code></td>
+                    <td><strong>${material.descripcion}</strong></td>
+                    <td><span class="badge bg-secondary">${material.nombre_categoria}</span></td>
+                    <td>${material.stock_actual}</td>
+                    <td>${material.stock_minimo}</td>
+                    <td>${material.unidad_medida}</td>
+                    <td>📋 <code>${material.qr}</code></td>
+                `;
+                tbody.appendChild(fila);
+            });
+
+            // Actualizar dinámicamente los contadores
+            document.getElementById('total-categorias').innerText = categorias.size;
+            document.getElementById('total-alertas').innerText = alertas;
+        })
+        .catch(error => console.error('Error al cargar materias primas:', error));
+
+    // 2. Filtrado dinámico del buscador
+    document.getElementById('buscador').addEventListener('input', function(e) {
+        const textoBusqueda = e.target.value.toLowerCase();
+        const filas = document.querySelectorAll('#tabla-materiales tr');
+        
+        filas.forEach(fila => {
+            const contenidoFila = fila.textContent.toLowerCase();
+            fila.style.display = contenidoFila.includes(textoBusqueda) ? '' : 'none';
+        });
+    });
+</script>
 </body>
 </html>
