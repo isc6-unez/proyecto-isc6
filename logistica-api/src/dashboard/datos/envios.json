@@ -1,0 +1,52 @@
+[
+    {
+        "guia": "ENV001",
+        "cliente": "Juan Pérez",
+        "destino": "Monterrey",
+        "vehiculo": "Camión 1",
+        "chofer": "Carlos López",
+        "estado": "Entregado",
+        "peso": 120,
+        "fecha": "2026-07-28"
+    },
+    {
+        "guia": "ENV002",
+        "cliente": "Ana García",
+        "destino": "Saltillo",
+        "vehiculo": "Camión 2",
+        "chofer": "Miguel Torres",
+        "estado": "En camino",
+        "peso": 75,
+        "fecha": "2026-07-28"
+    },
+    {
+        "guia": "ENV003",
+        "cliente": "Luis Martínez",
+        "destino": "Torreón",
+        "vehiculo": "Camión 3",
+        "chofer": "José Ruiz",
+        "estado": "Pendiente",
+        "peso": 210,
+        "fecha": "2026-07-27"
+    },
+    {
+        "guia": "ENV004",
+        "cliente": "María Hernández",
+        "destino": "Monclova",
+        "vehiculo": "Camión 1",
+        "chofer": "Carlos López",
+        "estado": "Entregado",
+        "peso": 95,
+        "fecha": "2026-07-26"
+    },
+    {
+        "guia": "ENV005",
+        "cliente": "Pedro Sánchez",
+        "destino": "Piedras Negras",
+        "vehiculo": "Camión 2",
+        "chofer": "Miguel Torres",
+        "estado": "En preparación",
+        "peso": 180,
+        "fecha": "2026-07-28"
+    }
+]
