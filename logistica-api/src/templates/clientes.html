@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clientes — DPT Logística</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #12161c;
+    --panel: #1b212b;
+    --panel-2: #202834;
+    --border: #2a3542;
+    --border-soft: #212a35;
+    --text: #e7ecf2;
+    --text-dim: #8d9aac;
+    --text-faint: #5c6675;
+    --amber: #e8a33d;
+    --amber-soft: rgba(232, 163, 61, 0.12);
+    --red: #e5686d;
+    --red-soft: rgba(229, 104, 109, 0.12);
+    --green: #5fbf8f;
+    --radius: 10px;
+    --font-display: "Space Grotesk", "Segoe UI", sans-serif;
+    --font-body: "Inter", "Segoe UI", sans-serif;
+    --font-mono: "JetBrains Mono", "Consolas", monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 48px 5vw 80px;
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(232,163,61,0.06), transparent),
+      var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin: 0 0 10px;
+  }
+  .eyebrow::before { content: "› "; opacity: 0.7; }
+
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 30px;
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+  }
+  .subtitulo {
+    color: var(--text-dim);
+    font-size: 14px;
+    margin: 0 0 32px;
+  }
+
+  .toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .buscador-wrap {
+    position: relative;
+    width: 320px;
+    max-width: 100%;
+  }
+  .buscador-wrap::before {
+    content: "›_";
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    pointer-events: none;
+  }
+  #buscador {
+    width: 100%;
+    padding: 10px 14px 10px 38px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  #buscador::placeholder { color: var(--text-faint); }
+  #buscador:focus { border-color: var(--amber); }
+
+  .btn {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 13.5px;
+    padding: 10px 18px;
+    border-radius: var(--radius);
+    border: 1px solid transparent;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-primario {
+    background: var(--amber);
+    color: #1a1300;
+  }
+  .btn-primario:hover { background: #f0ae4d; }
+  .btn-fantasma {
+    background: transparent;
+    border-color: var(--border);
+    color: var(--text-dim);
+  }
+  .btn-fantasma:hover { border-color: var(--text-faint); color: var(--text); }
+
+  .panel-tabla {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    text-align: left;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 14px 16px;
+    border-bottom: 2px solid var(--amber-soft);
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+  }
+  thead th:hover { color: var(--amber); }
+  thead th::after { content: "⇅"; margin-left: 5px; opacity: 0.35; font-size: 10px; }
+
+  tbody td {
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--border-soft);
+    font-size: 13.5px;
+    color: var(--text);
+  }
+  tbody td:first-child, .col-fecha {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--text-dim);
+  }
+  tbody tr { position: relative; transition: background 0.12s; }
+  tbody tr:hover { background: var(--panel-2); }
+  tbody tr:hover td:first-child { color: var(--amber); }
+  tbody tr::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: transparent;
+  }
+  tbody tr:hover::before { background: var(--amber); }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr.fila-eliminando { opacity: 0.25; transition: opacity 0.3s; }
+
+  a.accion {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    margin-right: 14px;
+    cursor: pointer;
+    border-bottom: 1px solid transparent;
+  }
+  a.accion:hover { color: var(--amber); border-color: var(--amber); }
+  a.accion.eliminar:hover { color: var(--red); border-color: var(--red); }
+
+  #sin-resultados, .estado-vacio {
+    display: none;
+    padding: 48px 20px;
+    text-align: center;
+    color: var(--text-faint);
+    font-size: 13.5px;
+  }
+  .estado-vacio-inicial {
+    padding: 56px 20px;
+    text-align: center;
+  }
+  .estado-vacio-inicial .titulo {
+    font-family: var(--font-display);
+    font-size: 17px;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .estado-vacio-inicial .desc { color: var(--text-dim); font-size: 13.5px; margin-bottom: 20px; }
+
+  #overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(6, 8, 11, 0.72);
+    backdrop-filter: blur(2px);
+    justify-content: center;
+    align-items: center;
+    z-index: 50;
+    padding: 20px;
+  }
+  #modal {
+    position: relative;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 30px 28px 26px;
+    width: 420px;
+    max-width: 100%;
+  }
+  #modal::before, #modal::after,
+  #modal .esquina-br, #modal .esquina-bl {
+    content: "";
+    position: absolute;
+    width: 16px; height: 16px;
+    border-color: var(--amber);
+    border-style: solid;
+    opacity: 0.85;
+  }
+  #modal::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+  #modal::after { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+  #modal .esquina-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
+  #modal .esquina-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+  #modal .eyebrow { margin-bottom: 6px; }
+  #modal-titulo {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 20px;
+    margin: 0 0 20px;
+  }
+  #modal label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-top: 14px;
+    margin-bottom: 6px;
+  }
+  #modal input {
+    width: 100%;
+    padding: 10px 12px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 13.5px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  #modal input:focus { border-color: var(--amber); }
+  #modal input::placeholder { color: var(--text-faint); }
+
+  #modal-error {
+    display: none;
+    margin-top: 16px;
+    padding: 10px 12px;
+    background: var(--red-soft);
+    border-left: 2px solid var(--red);
+    color: #f3b6b8;
+    font-size: 12.5px;
+    border-radius: 0 4px 4px 0;
+  }
+
+  #modal-botones {
+    margin-top: 24px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  @media (max-width: 720px) {
+    body { padding: 32px 4vw 60px; }
+    .panel-tabla { overflow-x: auto; }
+    table { min-width: 780px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+
+  a:focus-visible, button:focus-visible, input:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 2px;
+  }
+</style>
+</head>
+<body>
+
+  <p class="eyebrow">Sistema Industrial · Módulo DPT</p>
+  <h1>Clientes</h1>
+  <p class="subtitulo">Alta, edición y baja de clientes del área de logística.</p>
+
+  <div class="toolbar">
+    <div class="buscador-wrap">
+      <input type="text" id="buscador" placeholder="Buscar por nombre, correo, ciudad...">
+    </div>
+    <button class="btn btn-primario" onclick="abrirModalNuevo()">+ Nuevo cliente</button>
+  </div>
+
+  <div class="panel-tabla">
+    <table id="tabla-clientes">
+      <thead>
+        <tr>
+          <th data-col="0">ID</th>
+          <th data-col="1">Nombre</th>
+          <th data-col="2">Teléfono</th>
+          <th data-col="3">Correo</th>
+          <th data-col="4">Dirección</th>
+          <th data-col="5">Ciudad</th>
+          <th data-col="6">Estado</th>
+          <th data-col="7">Registro</th>
+          <th style="cursor:default;"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for cliente in clientes %}
+        <tr id="fila-{{ cliente[0] }}"
+            data-id="{{ cliente[0] }}"
+            data-nombre="{{ cliente[1] }}"
+            data-telefono="{{ cliente[2] or '' }}"
+            data-correo="{{ cliente[3] or '' }}"
+            data-direccion="{{ cliente[4] or '' }}"
+            data-ciudad="{{ cliente[5] or '' }}"
+            data-estado="{{ cliente[6] or '' }}">
+            <td>#{{ cliente[0] }}</td>
+            <td>{{ cliente[1] }}</td>
+            <td>{{ cliente[2] }}</td>
+            <td>{{ cliente[3] }}</td>
+            <td>{{ cliente[4] }}</td>
+            <td>{{ cliente[5] }}</td>
+            <td>{{ cliente[6] }}</td>
+            <td class="col-fecha">{{ cliente[7] }}</td>
+            <td>
+                <a class="accion" onclick="abrirModalEditar({{ cliente[0] }})">Editar</a>
+                <a class="accion eliminar" onclick="eliminarCliente({{ cliente[0] }})">Eliminar</a>
+            </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    {% if not clientes %}
+    <div class="estado-vacio-inicial">
+      <p class="titulo">Aún no hay clientes registrados</p>
+      <p class="desc">Agrega el primero para empezar a operar este módulo.</p>
+      <button class="btn btn-primario" onclick="abrirModalNuevo()">+ Nuevo cliente</button>
+    </div>
+    {% endif %}
+
+    <div id="sin-resultados">Sin coincidencias. Ajusta el término de búsqueda.</div>
+  </div>
+
+  <div id="overlay">
+    <div id="modal">
+      <span class="esquina-bl"></span><span class="esquina-br"></span>
+      <p class="eyebrow">Registro de cliente</p>
+      <h2 id="modal-titulo">Nuevo cliente</h2>
+      <form id="form-cliente">
+        <input type="hidden" id="f-id">
+        <label for="f-nombre">Nombre completo *</label>
+        <input type="text" id="f-nombre" required placeholder="Ej. Juan Pérez">
+        <label for="f-telefono">Teléfono</label>
+        <input type="text" id="f-telefono" placeholder="Ej. 8119205176">
+        <label for="f-correo">Correo</label>
+        <input type="email" id="f-correo" placeholder="nombre@correo.com">
+        <label for="f-direccion">Dirección</label>
+        <input type="text" id="f-direccion" placeholder="Calle y número">
+        <label for="f-ciudad">Ciudad</label>
+        <input type="text" id="f-ciudad">
+        <label for="f-estado">Estado</label>
+        <input type="text" id="f-estado">
+        <div id="modal-error"></div>
+        <div id="modal-botones">
+          <button type="button" class="btn btn-fantasma" onclick="cerrarModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primario">Guardar cliente</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const tabla = document.getElementById("tabla-clientes");
+    const tbody = tabla.querySelector("tbody");
+
+    const buscador = document.getElementById("buscador");
+    const sinResultados = document.getElementById("sin-resultados");
+    buscador.addEventListener("input", () => {
+      const texto = buscador.value.toLowerCase();
+      let visibles = 0;
+      tbody.querySelectorAll("tr").forEach(fila => {
+        const coincide = fila.textContent.toLowerCase().includes(texto);
+        fila.style.display = coincide ? "" : "none";
+        if (coincide) visibles++;
+      });
+      sinResultados.style.display = (visibles === 0 && tbody.children.length > 0) ? "block" : "none";
+    });
+
+    document.querySelectorAll("th[data-col]").forEach(th => {
+      let ascendente = true;
+      th.addEventListener("click", () => {
+        const col = parseInt(th.dataset.col);
+        const filas = Array.from(tbody.querySelectorAll("tr"));
+        filas.sort((a, b) => {
+          const valA = a.children[col].textContent.trim().replace("#", "");
+          const valB = b.children[col].textContent.trim().replace("#", "");
+          const numA = parseFloat(valA), numB = parseFloat(valB);
+          const cmp = (!isNaN(numA) && !isNaN(numB)) ? numA - numB : valA.localeCompare(valB);
+          return ascendente ? cmp : -cmp;
+        });
+        ascendente = !ascendente;
+        filas.forEach(fila => tbody.appendChild(fila));
+      });
+    });
+
+    const overlay = document.getElementById("overlay");
+    const modalTitulo = document.getElementById("modal-titulo");
+    const modalError = document.getElementById("modal-error");
+    const form = document.getElementById("form-cliente");
+
+    function abrirModalNuevo() {
+      modalTitulo.textContent = "Nuevo cliente";
+      form.reset();
+      document.getElementById("f-id").value = "";
+      modalError.style.display = "none";
+      overlay.style.display = "flex";
+      document.getElementById("f-nombre").focus();
+    }
+
+    function abrirModalEditar(id) {
+      const fila = document.getElementById("fila-" + id);
+      modalTitulo.textContent = "Editar cliente";
+      document.getElementById("f-id").value = fila.dataset.id;
+      document.getElementById("f-nombre").value = fila.dataset.nombre;
+      document.getElementById("f-telefono").value = fila.dataset.telefono;
+      document.getElementById("f-correo").value = fila.dataset.correo;
+      document.getElementById("f-direccion").value = fila.dataset.direccion;
+      document.getElementById("f-ciudad").value = fila.dataset.ciudad;
+      document.getElementById("f-estado").value = fila.dataset.estado;
+      modalError.style.display = "none";
+      overlay.style.display = "flex";
+    }
+
+    function cerrarModal() { overlay.style.display = "none"; }
+    overlay.addEventListener("click", (e) => { if (e.target === overlay) cerrarModal(); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") cerrarModal(); });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const id = document.getElementById("f-id").value;
+      const datos = {
+        nombre: document.getElementById("f-nombre").value,
+        telefono: document.getElementById("f-telefono").value,
+        correo: document.getElementById("f-correo").value,
+        direccion: document.getElementById("f-direccion").value,
+        ciudad: document.getElementById("f-ciudad").value,
+        estado: document.getElementById("f-estado").value,
+      };
+
+      try {
+        let respuesta;
+        if (id) {
+          respuesta = await fetch(`/api/clientes/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(datos)
+          });
+        } else {
+          respuesta = await fetch("/api/clientes", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(datos)
+          });
+        }
+
+        if (!respuesta.ok) {
+          const detalle = await respuesta.json().catch(() => ({}));
+          throw new Error(detalle.error || "No se pudo guardar el cliente.");
+        }
+
+        const resultado = await respuesta.json();
+        if (id) {
+          actualizarFilaEnTabla(id, datos);
+        } else {
+          agregarFilaATabla(resultado.id_cliente, datos);
+        }
+        cerrarModal();
+      } catch (error) {
+        modalError.textContent = "No se pudo guardar: " + error.message;
+        modalError.style.display = "block";
+      }
+    });
+
+    function agregarFilaATabla(id, datos) {
+      const fila = document.createElement("tr");
+      fila.id = "fila-" + id;
+      Object.assign(fila.dataset, { id, ...datos });
+      fila.innerHTML = `
+        <td>#${id}</td>
+        <td>${datos.nombre}</td>
+        <td>${datos.telefono}</td>
+        <td>${datos.correo}</td>
+        <td>${datos.direccion}</td>
+        <td>${datos.ciudad}</td>
+        <td>${datos.estado}</td>
+        <td class="col-fecha">—</td>
+        <td>
+          <a class="accion" onclick="abrirModalEditar(${id})">Editar</a>
+          <a class="accion eliminar" onclick="eliminarCliente(${id})">Eliminar</a>
+        </td>`;
+      tbody.appendChild(fila);
+      document.querySelector(".estado-vacio-inicial")?.remove();
+    }
+
+    function actualizarFilaEnTabla(id, datos) {
+      const fila = document.getElementById("fila-" + id);
+      Object.assign(fila.dataset, datos);
+      const c = fila.children;
+      c[1].textContent = datos.nombre;
+      c[2].textContent = datos.telefono;
+      c[3].textContent = datos.correo;
+      c[4].textContent = datos.direccion;
+      c[5].textContent = datos.ciudad;
+      c[6].textContent = datos.estado;
+    }
+
+    async function eliminarCliente(id) {
+      if (!confirm("¿Eliminar este cliente? Esta acción no se puede deshacer.")) return;
+      const fila = document.getElementById("fila-" + id);
+      fila.classList.add("fila-eliminando");
+      try {
+        const respuesta = await fetch(`/api/clientes/${id}`, { method: "DELETE" });
+        if (respuesta.ok) {
+          fila.remove();
+        } else {
+          const detalle = await respuesta.json().catch(() => ({}));
+          alert("No se pudo eliminar: " + (detalle.error || "intenta de nuevo."));
+          fila.classList.remove("fila-eliminando");
+        }
+      } catch (error) {
+        alert("Error de conexión al intentar eliminar.");
+        fila.classList.remove("fila-eliminando");
+      }
+    }
+  </script>
+</body>
+</html>
