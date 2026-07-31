@@ -9,7 +9,7 @@ load_dotenv()
 
 app = FastAPI(title="Modulo de Productos Terminados - CRUD Productos")
 
-# Función centralizada para conectar a la BD
+
 def obtener_conexion():
     try:
         conexion = psycopg2.connect(
@@ -35,7 +35,6 @@ class Producto(BaseModel):
     estado: str = "Activo"
 
 
-# 1. RUTA PARA REGISTRAR (POST -> INSERT)
 @app.post("/productos")
 def registrar_producto(producto: Producto):
     conexion = obtener_conexion()
@@ -59,7 +58,6 @@ def registrar_producto(producto: Producto):
         raise HTTPException(status_code=400, detail=f"Error al registrar en BD: {str(e)}")
 
 
-# 2. RUTA PARA MOSTRAR TODOS LOS PRODUCTOS (GET -> SELECT)
 @app.get("/productos")
 def mostrar_productos():
     conexion = obtener_conexion()
@@ -88,7 +86,6 @@ def mostrar_productos():
     return productos
 
 
-# 3. RUTA PARA ACTUALIZAR UN PRODUCTO POR ID (PUT -> UPDATE)
 @app.put("/productos/{id_producto}")
 def actualizar_producto(id_producto: int, producto_actualizado: Producto):
     conexion = obtener_conexion()
@@ -118,7 +115,6 @@ def actualizar_producto(id_producto: int, producto_actualizado: Producto):
         raise HTTPException(status_code=400, detail=f"Error al actualizar en BD: {str(e)}")
 
 
-# 4. RUTA PARA ELIMINAR UN PRODUCTO POR ID (DELETE -> DELETE)
 @app.delete("/productos/{id_producto}")
 def eliminar_producto(id_producto: int):
     conexion = obtener_conexion()
