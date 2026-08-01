@@ -1,20 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Edgar\\Documents\\Proyecto_Industrial\\Repositorio\\proyecto-isc6\\inventario-api\\src\\InventarioAPI.csproj": {}
+    "C:\\Users\\antonio.estrada\\Downloads\\ModuloEntradasSalidas_CSharp\\proyecto-isc6\\inventario-api\\src\\InventarioAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Edgar\\Documents\\Proyecto_Industrial\\Repositorio\\proyecto-isc6\\inventario-api\\src\\InventarioAPI.csproj": {
+    "C:\\Users\\antonio.estrada\\Downloads\\ModuloEntradasSalidas_CSharp\\proyecto-isc6\\inventario-api\\src\\InventarioAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Edgar\\Documents\\Proyecto_Industrial\\Repositorio\\proyecto-isc6\\inventario-api\\src\\InventarioAPI.csproj",
+        "projectUniqueName": "C:\\Users\\antonio.estrada\\Downloads\\ModuloEntradasSalidas_CSharp\\proyecto-isc6\\inventario-api\\src\\InventarioAPI.csproj",
         "projectName": "InventarioAPI",
-        "projectPath": "C:\\Users\\Edgar\\Documents\\Proyecto_Industrial\\Repositorio\\proyecto-isc6\\inventario-api\\src\\InventarioAPI.csproj",
-        "packagesPath": "C:\\Users\\Edgar\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Edgar\\Documents\\Proyecto_Industrial\\Repositorio\\proyecto-isc6\\inventario-api\\src\\obj\\",
+        "projectPath": "C:\\Users\\antonio.estrada\\Downloads\\ModuloEntradasSalidas_CSharp\\proyecto-isc6\\inventario-api\\src\\InventarioAPI.csproj",
+        "packagesPath": "C:\\Users\\antonio.estrada\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\antonio.estrada\\Downloads\\ModuloEntradasSalidas_CSharp\\proyecto-isc6\\inventario-api\\src\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\Edgar\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\antonio.estrada\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -32,11 +36,6 @@
           "warnAsError": [
             "NU1605"
           ]
-        },
-        "restoreAuditProperties": {
-          "enableAudit": "true",
-          "auditLevel": "low",
-          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -71,7 +70,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.422/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.127/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
