@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Edgar\\Documents\\Proyecto_Industrial\\Repositorio\\proyecto-isc6\\inventario-api\\src\\InventarioAPI.csproj": {}
+    "C:\\Users\\raika\\proyecto-isc6\\inventario-api\\src\\InventarioAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Edgar\\Documents\\Proyecto_Industrial\\Repositorio\\proyecto-isc6\\inventario-api\\src\\InventarioAPI.csproj": {
+    "C:\\Users\\raika\\proyecto-isc6\\inventario-api\\src\\InventarioAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Edgar\\Documents\\Proyecto_Industrial\\Repositorio\\proyecto-isc6\\inventario-api\\src\\InventarioAPI.csproj",
+        "projectUniqueName": "C:\\Users\\raika\\proyecto-isc6\\inventario-api\\src\\InventarioAPI.csproj",
         "projectName": "InventarioAPI",
-        "projectPath": "C:\\Users\\Edgar\\Documents\\Proyecto_Industrial\\Repositorio\\proyecto-isc6\\inventario-api\\src\\InventarioAPI.csproj",
-        "packagesPath": "C:\\Users\\Edgar\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Edgar\\Documents\\Proyecto_Industrial\\Repositorio\\proyecto-isc6\\inventario-api\\src\\obj\\",
+        "projectPath": "C:\\Users\\raika\\proyecto-isc6\\inventario-api\\src\\InventarioAPI.csproj",
+        "packagesPath": "C:\\Users\\raika\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\raika\\proyecto-isc6\\inventario-api\\src\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Edgar\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\raika\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -45,7 +45,21 @@
           "dependencies": {
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
-              "version": "[8.0.28, )"
+              "version": "[8.0.27, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
+              "target": "Package",
+              "version": "[8.0.0, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
@@ -71,7 +85,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.422/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.421/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
