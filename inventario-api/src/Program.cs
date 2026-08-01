@@ -3,7 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using InventarioAPI.Data; 
 
 var builder = WebApplication.CreateBuilder(args);
-builder.WebHost.UseUrls("http://+:5000");
+builder.WebHost.UseUrls("http://+:5000"); // se tuvo que agregar obligando a la api a iniciar en el puerto 5000, por eso cuando docker intenta coonectar el exterior con el contenedor, los puertos coinciden a la perfección y la api deja de dar errores de conexiones 
+
 
 // 1. Obtener la cadena de conexión
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
