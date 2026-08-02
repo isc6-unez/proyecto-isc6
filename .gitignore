@@ -20,3 +20,12 @@ npm-debug.log
 # Sistema Operativo
 .DS_Store
 Thumbs.db
+
+# C# /.NET
+bin/
+obj/
+**/bin/
+**/obj/
+.vs/
+*.user
+*.suo
