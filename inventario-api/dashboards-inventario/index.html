@@ -38,7 +38,7 @@
             <!-- Menú de Navegación -->
             <nav class="p-4 space-y-1.5 text-xs font-medium">
                 <p class="px-3 py-2 text-[10px] uppercase font-bold text-slate-500 tracking-wider">Módulos Principales</p>
-                <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-blue-600 text-white font-semibold transition-all shadow-md shadow-blue-600/20">
+                <a href="index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-blue-600 text-white font-semibold transition-all shadow-md shadow-blue-600/20">
                     <i class="fa-solid fa-chart-pie text-sm"></i> Dashboard Existencias
                 </a>
                 <a href="movimientos.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 transition-all">
@@ -178,11 +178,11 @@
 
                     <!-- Botones de Filtro Rápido -->
                     <div class="flex items-center gap-1.5 w-full sm:w-auto overflow-x-auto">
-                        <button onclick="filtrarEstado('todos')" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white transition-all">Todos</button>
-                        <button onclick="filtrarEstado('critico')" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all">
+                        <button onclick="filtrarEstado('todos', this)" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white transition-all shadow-xs">Todos</button>
+                        <button onclick="filtrarEstado('critico', this)" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all">
                             <i class="fa-solid fa-circle text-[8px] text-rose-500 mr-1"></i> Solo Críticos
                         </button>
-                        <button onclick="filtrarEstado('optimo')" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all">
+                        <button onclick="filtrarEstado('optimo', this)" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all">
                             <i class="fa-solid fa-circle text-[8px] text-emerald-500 mr-1"></i> Óptimos
                         </button>
                     </div>
@@ -205,7 +205,7 @@
                             </tr>
                         </thead>
                         <tbody id="tabla-materiales" class="divide-y divide-slate-100 text-xs">
-                            <!-- Los datos JSON se renderizan aquí dinámicamente -->
+                            <!-- Los datos de la API C# se renderizan aquí dinámicamente -->
                         </tbody>
                     </table>
                 </div>
@@ -220,15 +220,29 @@
     let chartStockInstance = null;
     let chartCatInstance = null;
 
-    // 1. Cargar y procesar datos desde JSON
-    fetch('materias_primas.json')
-        .then(response => response.json())
+    // 1. Cargar y procesar datos desde la API C# PostgreSQL
+    fetch('http://localhost:5256/api/Movimientos')
+        .then(response => {
+            if (!response.ok) throw new Error('Error de red al consultar la API');
+            return response.json();
+        })
         .then(data => {
             globalData = data;
             renderizarDashboard(data);
             crearGraficas(data);
         })
-        .catch(error => console.error('Error al cargar materias primas:', error));
+        .catch(error => {
+            console.error('Error al cargar materias primas:', error);
+            const tbody = document.getElementById('tabla-materiales');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="8" class="px-5 py-8 text-center text-red-500 font-medium bg-red-50/50">
+                        <i class="fa-solid fa-triangle-exclamation text-2xl mb-2 block"></i>
+                        No se pudo conectar con la API (http://localhost:5256/api/Movimientos). Verifica que 'dotnet run' siga ejecutándose.
+                    </td>
+                </tr>
+            `;
+        });
 
     // 2. Función Principal de Renderizado
     function renderizarDashboard(data) {
@@ -240,11 +254,33 @@
 
         document.getElementById('total-materiales').innerText = data.length;
 
+        if (data.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="8" class="px-5 py-8 text-center text-slate-400 font-medium">
+                        <i class="fa-solid fa-box-open text-2xl mb-2 text-slate-300 block"></i>
+                        No hay materias primas registradas en la base de datos PostgreSQL.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
         data.forEach(material => {
-            categorias.add(material.nombre_categoria);
+            // Mapeo flexible de campos PostgreSQL / C#
+            const idMaterial = material.id_material || material.id || 'N/A';
+            const nombreMat = material.nombre || 'Materia Prima';
+            const descripcionMat = material.descripcion ? ` - ${material.descripcion}` : '';
+            const nombreCategoria = material.nombre_categoria || `Categoría ${material.id_categoria || 1}`;
+            const stockActual = Number(material.stock_actual || 0);
+            const stockMinimo = Number(material.stock_minimo || 0);
+            const unidadMedida = material.unidad_medida || 'pieza';
+            const qrCodigo = material.qr || material.codigo_qr || `QR-MP-00${idMaterial}`;
+
+            categorias.add(nombreCategoria);
             
-            const esAlerta = Number(material.stock_actual) < Number(material.stock_minimo);
-            if(esAlerta) alertas++;
+            const esAlerta = stockActual <= stockMinimo;
+            if (esAlerta) alertas++;
 
             const estadoBadge = esAlerta
                 ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-700">
@@ -256,24 +292,24 @@
 
             const fila = document.createElement('tr');
             fila.className = esAlerta 
-                ? 'bg-rose-50/50 hover:bg-rose-100/50 transition-colors data-status="critico"' 
-                : 'hover:bg-slate-50 transition-colors data-status="optimo"';
+                ? 'bg-rose-50/50 hover:bg-rose-100/50 transition-colors' 
+                : 'hover:bg-slate-50 transition-colors';
 
             fila.innerHTML = `
-                <td class="px-5 py-3.5 font-mono font-bold text-slate-500">MP-${material.id_material}</td>
-                <td class="px-5 py-3.5 font-semibold text-slate-800">${material.descripcion}</td>
+                <td class="px-5 py-3.5 font-mono font-bold text-slate-500">MP-${idMaterial}</td>
+                <td class="px-5 py-3.5 font-semibold text-slate-800">${nombreMat}<span class="text-xs font-normal text-slate-500">${descripcionMat}</span></td>
                 <td class="px-5 py-3.5">
                     <span class="px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-100 text-slate-600 border border-slate-200">
-                        ${material.nombre_categoria}
+                        ${nombreCategoria}
                     </span>
                 </td>
-                <td class="px-5 py-3.5 font-extrabold ${esAlerta ? 'text-rose-600' : 'text-slate-800'}">${material.stock_actual}</td>
-                <td class="px-5 py-3.5 text-slate-400 font-medium">${material.stock_minimo}</td>
-                <td class="px-5 py-3.5 text-slate-500">${material.unidad_medida}</td>
+                <td class="px-5 py-3.5 font-extrabold ${esAlerta ? 'text-rose-600' : 'text-slate-800'}">${stockActual}</td>
+                <td class="px-5 py-3.5 text-slate-400 font-medium">${stockMinimo}</td>
+                <td class="px-5 py-3.5 text-slate-500">${unidadMedida}</td>
                 <td class="px-5 py-3.5">${estadoBadge}</td>
                 <td class="px-5 py-3.5">
                     <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-slate-900 text-white font-mono text-[10px]">
-                        <i class="fa-solid fa-qrcode text-slate-400"></i> ${material.qr}
+                        <i class="fa-solid fa-qrcode text-slate-400"></i> ${qrCodigo}
                     </span>
                 </td>
             `;
@@ -290,9 +326,9 @@
         const barra = document.getElementById('barra-salud');
         barra.style.width = `${salud}%`;
         
-        if(salud < 60) {
+        if (salud < 60) {
             barra.className = "bg-rose-500 h-2 rounded-full transition-all duration-1000";
-        } else if(salud < 85) {
+        } else if (salud < 85) {
             barra.className = "bg-amber-500 h-2 rounded-full transition-all duration-1000";
         } else {
             barra.className = "bg-emerald-500 h-2 rounded-full transition-all duration-1000";
@@ -301,15 +337,22 @@
 
     // 3. Crear Gráficas Interactivas con Chart.js
     function crearGraficas(data) {
-        const nombres = data.map(m => m.descripcion);
-        const stockActual = data.map(m => m.stock_actual);
-        const stockMinimo = data.map(m => m.stock_minimo);
+        if (data.length === 0) return;
+
+        const nombres = data.map(m => m.nombre || m.descripcion || `MP-${m.id_material}`);
+        const stockActual = data.map(m => Number(m.stock_actual || 0));
+        const stockMinimo = data.map(m => Number(m.stock_minimo || 0));
 
         // Agrupar categorías
         const catMap = {};
         data.forEach(m => {
-            catMap[m.nombre_categoria] = (catMap[m.nombre_categoria] || 0) + 1;
+            const cat = m.nombre_categoria || `Categoría ${m.id_categoria || 1}`;
+            catMap[cat] = (catMap[cat] || 0) + 1;
         });
+
+        // Limpiar gráficas previas si existen
+        if (chartStockInstance) chartStockInstance.destroy();
+        if (chartCatInstance) chartCatInstance.destroy();
 
         // Gráfica de Barras
         const ctxStock = document.getElementById('chartStock').getContext('2d');
@@ -359,15 +402,24 @@
     });
 
     // 5. Botones de Filtro Rápido (Todos / Críticos / Óptimos)
-    function filtrarEstado(tipo) {
+    function filtrarEstado(tipo, botonPresionado) {
+        // Cambiar estilos visuales de botones
+        const botones = document.querySelectorAll('.filter-btn');
+        botones.forEach(btn => {
+            btn.className = 'filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all';
+        });
+        if (botonPresionado) {
+            botonPresionado.className = 'filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white transition-all shadow-xs';
+        }
+
         const filas = document.querySelectorAll('#tabla-materiales tr');
         filas.forEach(fila => {
-            if(tipo === 'todos') {
+            if (tipo === 'todos') {
                 fila.style.display = '';
-            } else if(tipo === 'critico') {
-                fila.style.display = fila.innerHTML.includes('Crítico') ? '' : 'none';
-            } else if(tipo === 'optimo') {
-                fila.style.display = fila.innerHTML.includes('Óptimo') ? '' : 'none';
+            } else if (tipo === 'critico') {
+                fila.style.display = fila.innerText.includes('Crítico') ? '' : 'none';
+            } else if (tipo === 'optimo') {
+                fila.style.display = fila.innerText.includes('Óptimo') ? '' : 'none';
             }
         });
     }

@@ -214,11 +214,11 @@
                     </div>
 
                     <div class="flex items-center gap-1.5 w-full sm:w-auto overflow-x-auto">
-                        <button onclick="filtrarTipo('todos')" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white transition-all">Todos</button>
-                        <button onclick="filtrarTipo('entrada')" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all">
+                        <button onclick="filtrarTipo('todos', this)" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white transition-all shadow-xs">Todos</button>
+                        <button onclick="filtrarTipo('entrada', this)" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all">
                             <i class="fa-solid fa-circle text-[8px] text-emerald-500 mr-1"></i> Solo Entradas
                         </button>
-                        <button onclick="filtrarTipo('salida')" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all">
+                        <button onclick="filtrarTipo('salida', this)" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all">
                             <i class="fa-solid fa-circle text-[8px] text-amber-500 mr-1"></i> Solo Salidas
                         </button>
                     </div>
@@ -238,7 +238,7 @@
                             </tr>
                         </thead>
                         <tbody id="tabla-movimientos" class="divide-y divide-slate-100 text-xs">
-                            <!-- Se inyecta dinámicamente desde movimientos.json -->
+                            <!-- Se inyecta dinámicamente desde la API -->
                         </tbody>
                     </table>
                 </div>
@@ -254,23 +254,48 @@
         let sumaCantidadEntradas = 0;
         let sumaCantidadSalidas = 0;
 
-        // 1. Cargar y procesar datos de movimientos.json
-        fetch('movimientos.json')
-            .then(response => response.json())
+        // 1. Cargar y procesar datos desde la API C# PostgreSQL
+        fetch('http://localhost:5256/api/Movimientos')
+            .then(response => {
+                if (!response.ok) throw new Error('Error en la API');
+                return response.json();
+            })
             .then(data => {
                 const tbody = document.getElementById('tabla-movimientos');
+                tbody.innerHTML = '';
                 
                 document.getElementById('total-operaciones').innerText = data.length;
 
+                if (data.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="px-5 py-8 text-center text-slate-400 font-medium">
+                                <i class="fa-solid fa-box-open text-2xl mb-2 text-slate-300 block"></i>
+                                No hay movimientos registrados en la base de datos PostgreSQL.
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
                 data.forEach(mov => {
-                    const esEntrada = mov.tipo.toLowerCase() === 'entrada';
+                    // Mapeo flexible de propiedades para prevenir 'undefined'
+                    const idMovimiento = mov.id_movimiento || mov.id_mov || mov.id || 'N/A';
+                    const idMaterial = mov.id_material || mov.id_mat || 'N/A';
+                    const nombreMaterial = mov.material || mov.nombre || mov.descripcion || 'Sin Especificar';
+                    const tipoMovimiento = (mov.tipo || mov.tipo_movimiento || 'Entrada').toString();
+                    const cantidad = Number(mov.cantidad || mov.stock_actual || 0);
+                    const fecha = mov.fecha || mov.fecha_movimiento || 'Sin fecha';
+                    const qrCodigo = mov.qr_codigo || mov.codigo_qr || mov.qr || 'QR-N/A';
+
+                    const esEntrada = tipoMovimiento.toLowerCase().includes('entrada');
                     
                     if (esEntrada) {
                         conteoEntradas++;
-                        sumaCantidadEntradas += Number(mov.cantidad || 0);
+                        sumaCantidadEntradas += cantidad;
                     } else {
                         conteoSalidas++;
-                        sumaCantidadSalidas += Number(mov.cantidad || 0);
+                        sumaCantidadSalidas += cantidad;
                     }
 
                     const badgeTipo = esEntrada 
@@ -285,15 +310,15 @@
                     fila.className = 'hover:bg-slate-50 transition-colors border-b border-slate-100';
 
                     fila.innerHTML = `
-                        <td class="px-5 py-3.5 font-mono font-bold text-slate-500">MOV-${mov.id_movimiento}</td>
-                        <td class="px-5 py-3.5 font-mono text-slate-400">MP-${mov.id_material}</td>
-                        <td class="px-5 py-3.5 font-semibold text-slate-800">${mov.material}</td>
+                        <td class="px-5 py-3.5 font-mono font-bold text-slate-500">MOV-${idMovimiento}</td>
+                        <td class="px-5 py-3.5 font-mono text-slate-400">MP-${idMaterial}</td>
+                        <td class="px-5 py-3.5 font-semibold text-slate-800">${nombreMaterial}</td>
                         <td class="px-5 py-3.5">${badgeTipo}</td>
-                        <td class="px-5 py-3.5 font-extrabold ${esEntrada ? 'text-emerald-600' : 'text-amber-600'}">${mov.cantidad}</td>
-                        <td class="px-5 py-3.5 text-slate-500">${mov.fecha}</td>
+                        <td class="px-5 py-3.5 font-extrabold ${esEntrada ? 'text-emerald-600' : 'text-amber-600'}">${cantidad}</td>
+                        <td class="px-5 py-3.5 text-slate-500">${fecha}</td>
                         <td class="px-5 py-3.5">
                             <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-slate-900 text-white font-mono text-[10px]">
-                                <i class="fa-solid fa-qrcode text-slate-400"></i> ${mov.qr_codigo}
+                                <i class="fa-solid fa-qrcode text-slate-400"></i> ${qrCodigo}
                             </span>
                         </td>
                     `;
@@ -307,7 +332,7 @@
                 const neto = sumaCantidadEntradas - sumaCantidadSalidas;
                 const elNeto = document.getElementById('total-neto');
                 elNeto.innerText = (neto > 0 ? `+${neto}` : neto);
-                if(neto > 0) elNeto.classList.add('text-emerald-600');
+                if (neto > 0) elNeto.classList.add('text-emerald-600');
 
                 // 2. CÁLCULO DE PORCENTAJES Y GRÁFICA HORIZONTAL
                 const totalOps = conteoEntradas + conteoSalidas;
@@ -351,7 +376,18 @@
                     }
                 });
             })
-            .catch(error => console.error('Error al cargar movimientos:', error));
+            .catch(error => {
+                console.error('Error al cargar movimientos:', error);
+                const tbody = document.getElementById('tabla-movimientos');
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="px-5 py-8 text-center text-red-500 font-medium bg-red-50/50">
+                            <i class="fa-solid fa-triangle-exclamation text-2xl mb-2 block"></i>
+                            No se pudo conectar con la API (http://localhost:5256/api/Movimientos). Asegúrate de tener 'dotnet run' activo.
+                        </td>
+                    </tr>
+                `;
+            });
 
         // 3. Buscador en tiempo real
         document.getElementById('buscador').addEventListener('input', function(e) {
@@ -364,8 +400,18 @@
             });
         });
 
-        // 4. Filtro Rápido (Todos / Entradas / Salidas)
-        function filtrarTipo(tipo) {
+        // 4. Filtro Rápido (Todos / Entradas / Salidas) + Estilos de Botón
+        function filtrarTipo(tipo, botonPresionado) {
+            // Cambiar estilos visuales de botones
+            const botones = document.querySelectorAll('.filter-btn');
+            botones.forEach(btn => {
+                btn.className = 'filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all';
+            });
+            if (botonPresionado) {
+                botonPresionado.className = 'filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white transition-all shadow-xs';
+            }
+
+            // Filtrar las filas
             const filas = document.querySelectorAll('#tabla-movimientos tr');
             filas.forEach(fila => {
                 if (tipo === 'todos') {
