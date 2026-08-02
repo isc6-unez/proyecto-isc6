@@ -1,0 +1,155 @@
+[
+  {
+    "id_movimiento": "MOV-101",
+    "id_material": "MP-001",
+    "material": "Planchas de Acero Inoxidable",
+    "tipo": "Entrada",
+    "cantidad": 50,
+    "fecha": "2026-07-01",
+    "qr_codigo": "DDA-LOTE-2026A-001"
+  },
+  {
+    "id_movimiento": "MOV-102",
+    "id_material": "MP-002",
+    "material": "Tornillos de Alta Resistencia 2 pulgadas",
+    "tipo": "Salida",
+    "cantidad": 5,
+    "fecha": "2026-07-02",
+    "qr_codigo": "DDA-LOTE-2026A-002"
+  },
+  {
+    "id_movimiento": "MOV-103",
+    "id_material": "MP-003",
+    "material": "Pintura Epóxica Gris",
+    "tipo": "Entrada",
+    "cantidad": 20,
+    "fecha": "2026-07-03",
+    "qr_codigo": "DDA-LOTE-2026A-003"
+  },
+  {
+    "id_movimiento": "MOV-104",
+    "id_material": "MP-002",
+    "material": "Tornillos de Alta Resistencia 2 pulgadas",
+    "tipo": "Entrada",
+    "cantidad": 100,
+    "fecha": "2026-07-04",
+    "qr_codigo": "DDA-LOTE-2026A-002"
+  },
+  {
+    "id_movimiento": "MOV-105",
+    "id_material": "MP-005",
+    "material": "Resina Poliéster Industrial",
+    "tipo": "Salida",
+    "cantidad": 15,
+    "fecha": "2026-07-05",
+    "qr_codigo": "DDA-LOTE-2026A-005"
+  },
+  {
+    "id_movimiento": "MOV-106",
+    "id_material": "MP-001",
+    "material": "Planchas de Acero Inoxidable",
+    "tipo": "Salida",
+    "cantidad": 12,
+    "fecha": "2026-07-06",
+    "qr_codigo": "DDA-LOTE-2026A-001"
+  },
+  {
+    "id_movimiento": "MOV-107",
+    "id_material": "MP-004",
+    "material": "Cables de Cobre Calibre 12",
+    "tipo": "Entrada",
+    "cantidad": 200,
+    "fecha": "2026-07-07",
+    "qr_codigo": "DDA-LOTE-2026A-004"
+  },
+  {
+    "id_movimiento": "MOV-108",
+    "id_material": "MP-006",
+    "material": "Perfil de Aluminio Estructural",
+    "tipo": "Entrada",
+    "cantidad": 40,
+    "fecha": "2026-07-08",
+    "qr_codigo": "DDA-LOTE-2026A-006"
+  },
+  {
+    "id_movimiento": "MOV-109",
+    "id_material": "MP-003",
+    "material": "Pintura Epóxica Gris",
+    "tipo": "Salida",
+    "cantidad": 8,
+    "fecha": "2026-07-10",
+    "qr_codigo": "DDA-LOTE-2026A-003"
+  },
+  {
+    "id_movimiento": "MOV-110",
+    "id_material": "MP-007",
+    "material": "Soldadura 6013 1/8 pulgadas",
+    "tipo": "Entrada",
+    "cantidad": 35,
+    "fecha": "2026-07-12",
+    "qr_codigo": "DDA-LOTE-2026A-007"
+  },
+  {
+    "id_movimiento": "MOV-111",
+    "id_material": "MP-004",
+    "material": "Cables de Cobre Calibre 12",
+    "tipo": "Salida",
+    "cantidad": 45,
+    "fecha": "2026-07-15",
+    "qr_codigo": "DDA-LOTE-2026A-004"
+  },
+  {
+    "id_movimiento": "MOV-112",
+    "id_material": "MP-008",
+    "material": "Tubos de PVC Industrial 3 pulgadas",
+    "tipo": "Entrada",
+    "cantidad": 60,
+    "fecha": "2026-07-18",
+    "qr_codigo": "DDA-LOTE-2026A-008"
+  },
+  {
+    "id_movimiento": "MOV-113",
+    "id_material": "MP-006",
+    "material": "Perfil de Aluminio Estructural",
+    "tipo": "Salida",
+    "cantidad": 18,
+    "fecha": "2026-07-20",
+    "qr_codigo": "DDA-LOTE-2026A-006"
+  },
+  {
+    "id_movimiento": "MOV-114",
+    "id_material": "MP-005",
+    "material": "Resina Poliéster Industrial",
+    "tipo": "Entrada",
+    "cantidad": 40,
+    "fecha": "2026-07-22",
+    "qr_codigo": "DDA-LOTE-2026A-005"
+  },
+  {
+    "id_movimiento": "MOV-115",
+    "id_material": "MP-007",
+    "material": "Soldadura 6013 1/8 pulgadas",
+    "tipo": "Salida",
+    "cantidad": 10,
+    "fecha": "2026-07-25",
+    "qr_codigo": "DDA-LOTE-2026A-007"
+  },
+  {
+    "id_movimiento": "MOV-116",
+    "id_material": "MP-001",
+    "material": "Planchas de Acero Inoxidable",
+    "tipo": "Entrada",
+    "cantidad": 30,
+    "fecha": "2026-07-26",
+    "qr_codigo": "DDA-LOTE-2026A-001"
+  },
+  {
+    "id_movimiento": "MOV-117",
+    "id_material": "MP-008",
+    "material": "Tubos de PVC Industrial 3 pulgadas",
+    "tipo": "Salida",
+    "cantidad": 25,
+    "fecha": "2026-07-28",
+    "qr_codigo": "DDA-LOTE-2026A-008"
+  }
+]
