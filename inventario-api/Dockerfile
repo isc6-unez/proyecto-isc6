@@ -1,6 +1,9 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 COPY src/ .
-COPY dashboards-inventario/ ./dashboards-inventario/
 RUN dotnet publish -c Release -o out
+
+# Copiar los dashboards a la carpeta final de salida (out)
+COPY dashboards-inventario/ ./out/dashboards-inventario/
+
 ENTRYPOINT ["dotnet", "out/InventarioAPI.dll"]
