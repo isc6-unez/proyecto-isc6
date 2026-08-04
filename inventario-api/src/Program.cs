@@ -30,6 +30,7 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+app.UseStaticFiles();
 
 // Habilitar Swagger siempre (Desarrollo y Producción/Docker)
 app.UseSwagger();
