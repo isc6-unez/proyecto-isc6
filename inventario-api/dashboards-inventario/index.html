@@ -221,7 +221,7 @@
     let chartCatInstance = null;
 
     // 1. Cargar y procesar datos desde la API C# PostgreSQL
-    fetch('http://localhost:5256/api/Movimientos')
+    fetch('http://localhost:5000/api/Movimientos')
         .then(response => {
             if (!response.ok) throw new Error('Error de red al consultar la API');
             return response.json();

@@ -253,9 +253,10 @@
         let conteoSalidas = 0;
         let sumaCantidadEntradas = 0;
         let sumaCantidadSalidas = 0;
+        let miGrafica = null;
 
         // 1. Cargar y procesar datos desde la API C# PostgreSQL
-        fetch('http://localhost:5256/api/Movimientos')
+        fetch('http://localhost:5000/api/Movimientos')
             .then(response => {
                 if (!response.ok) throw new Error('Error en la API');
                 return response.json();
@@ -264,6 +265,11 @@
                 const tbody = document.getElementById('tabla-movimientos');
                 tbody.innerHTML = '';
                 
+                conteoEntradas = 0;
+                conteoSalidas = 0;
+                sumaCantidadEntradas = 0;
+                sumaCantidadSalidas = 0;
+
                 document.getElementById('total-operaciones').innerText = data.length;
 
                 if (data.length === 0) {
@@ -278,18 +284,28 @@
                     return;
                 }
 
-                data.forEach(mov => {
-                    // Mapeo flexible de propiedades para prevenir 'undefined'
-                    const idMovimiento = mov.id_movimiento || mov.id_mov || mov.id || 'N/A';
-                    const idMaterial = mov.id_material || mov.id_mat || 'N/A';
-                    const nombreMaterial = mov.material || mov.nombre || mov.descripcion || 'Sin Especificar';
-                    const tipoMovimiento = (mov.tipo || mov.tipo_movimiento || 'Entrada').toString();
-                    const cantidad = Number(mov.cantidad || mov.stock_actual || 0);
-                    const fecha = mov.fecha || mov.fecha_movimiento || 'Sin fecha';
-                    const qrCodigo = mov.qr_codigo || mov.codigo_qr || mov.qr || 'QR-N/A';
-
-                    const esEntrada = tipoMovimiento.toLowerCase().includes('entrada');
+                data.forEach((mov, index) => {
+                    const idMaterial = mov.id_material || mov.idMaterial || mov.IdMaterial || mov.id_mat || 'N/A';
                     
+                    // Si no hay ID de movimiento, genera un correlativo dinámico (101, 102, etc.)
+                    const idMovimiento = mov.id_movimiento || mov.idMovimiento || mov.IdMovimiento || mov.id_mov || mov.id || (101 + index);
+                    
+                    const nombreMaterial = mov.material || mov.nombreMaterial || mov.NombreMaterial || mov.nombre || mov.descripcion || 'Sin Especificar';
+                    
+                    const rawTipo = (mov.tipo_movimiento || mov.tipoMovimiento || mov.TipoMovimiento || mov.tipo || mov.Tipo || mov.tipo_mov || '').toString().trim().toLowerCase();
+                    let cantidadOriginal = Number(mov.cantidad || mov.Cantidad || mov.stock_actual || 0);
+                    
+                    let esEntrada = true;
+                    if (rawTipo) {
+                        if (rawTipo.includes('salida') || rawTipo === 's' || rawTipo.includes('egreso') || rawTipo.includes('despacho')) {
+                            esEntrada = false;
+                        }
+                    } else if (cantidadOriginal < 0) {
+                        esEntrada = false;
+                    }
+
+                    const cantidad = Math.abs(cantidadOriginal);
+
                     if (esEntrada) {
                         conteoEntradas++;
                         sumaCantidadEntradas += cantidad;
@@ -297,6 +313,13 @@
                         conteoSalidas++;
                         sumaCantidadSalidas += cantidad;
                     }
+
+                    // Autogenera la fecha actual si la API no devuelve una
+                    const fechaHoy = new Date().toLocaleDateString('es-MX', { year: 'numeric', month: '2-digit', day: '2-digit' });
+                    const fecha = mov.fecha || mov.fechaMovimiento || mov.FechaMovimiento || mov.fecha_movimiento || fechaHoy;
+
+                    // Autogenera el código QR de trazabilidad basado en la materia prima
+                    const qrCodigo = mov.qr_codigo || mov.codigoQr || mov.CodigoQr || mov.codigo_qr || mov.qr || `QR-MP0${idMaterial}`;
 
                     const badgeTipo = esEntrada 
                         ? `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
@@ -325,16 +348,14 @@
                     tbody.appendChild(fila);
                 });
 
-                // Actualizar tarjetas de resumen
                 document.getElementById('total-entradas').innerText = conteoEntradas;
                 document.getElementById('total-salidas').innerText = conteoSalidas;
                 
                 const neto = sumaCantidadEntradas - sumaCantidadSalidas;
                 const elNeto = document.getElementById('total-neto');
                 elNeto.innerText = (neto > 0 ? `+${neto}` : neto);
-                if (neto > 0) elNeto.classList.add('text-emerald-600');
+                elNeto.className = `text-2xl font-bold mt-1 ${neto < 0 ? 'text-amber-600' : 'text-emerald-600'}`;
 
-                // 2. CÁLCULO DE PORCENTAJES Y GRÁFICA HORIZONTAL
                 const totalOps = conteoEntradas + conteoSalidas;
                 const pctEntradas = totalOps > 0 ? Math.round((conteoEntradas / totalOps) * 100) : 0;
                 const pctSalidas = totalOps > 0 ? Math.round((conteoSalidas / totalOps) * 100) : 0;
@@ -344,9 +365,12 @@
                 document.getElementById('barra-pct-entradas').style.width = `${pctEntradas}%`;
                 document.getElementById('barra-pct-salidas').style.width = `${pctSalidas}%`;
 
-                // Inicializar Gráfica Horizontal con Chart.js
+                if (miGrafica) {
+                    miGrafica.destroy();
+                }
+
                 const ctx = document.getElementById('graficaMovimientos').getContext('2d');
-                new Chart(ctx, {
+                miGrafica = new Chart(ctx, {
                     type: 'bar',
                     data: {
                         labels: ['Entradas', 'Salidas'],
@@ -383,13 +407,12 @@
                     <tr>
                         <td colspan="7" class="px-5 py-8 text-center text-red-500 font-medium bg-red-50/50">
                             <i class="fa-solid fa-triangle-exclamation text-2xl mb-2 block"></i>
-                            No se pudo conectar con la API (http://localhost:5256/api/Movimientos). Asegúrate de tener 'dotnet run' activo.
+                            No se pudo conectar con la API (http://localhost:5000/api/Movimientos). Asegúrate de tener 'dotnet run' activo.
                         </td>
                     </tr>
                 `;
             });
 
-        // 3. Buscador en tiempo real
         document.getElementById('buscador').addEventListener('input', function(e) {
             const textoBusqueda = e.target.value.toLowerCase();
             const filas = document.querySelectorAll('#tabla-movimientos tr');
@@ -400,9 +423,7 @@
             });
         });
 
-        // 4. Filtro Rápido (Todos / Entradas / Salidas) + Estilos de Botón
         function filtrarTipo(tipo, botonPresionado) {
-            // Cambiar estilos visuales de botones
             const botones = document.querySelectorAll('.filter-btn');
             botones.forEach(btn => {
                 btn.className = 'filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all';
@@ -411,7 +432,6 @@
                 botonPresionado.className = 'filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white transition-all shadow-xs';
             }
 
-            // Filtrar las filas
             const filas = document.querySelectorAll('#tabla-movimientos tr');
             filas.forEach(fila => {
                 if (tipo === 'todos') {
