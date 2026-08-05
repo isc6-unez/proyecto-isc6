@@ -1,6 +1,6 @@
 using System;
 
-namespace ProveedoresApp.Models
+namespace InventarioAPI.Models
 {
     public class Proveedor
     {
