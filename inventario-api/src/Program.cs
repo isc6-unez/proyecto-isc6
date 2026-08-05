@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using InventarioAPI.Data; 
+using InventarioAPI.Services;
+using InventarioAPI.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +19,10 @@ builder.Services.AddDbContext<InventarioDbContext>(options =>
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+// Servicios de Logistica Avanzada
+builder.Services.AddScoped<ILoteService, LoteService>();
+builder.Services.AddScoped<IPedidoService, PedidoService>();
+builder.Services.AddScoped<IPickingService, PickingService>();
 
 // 4. Configurar CORS (Permite peticiones desde el Dashboard)
 builder.Services.AddCors(options =>
@@ -41,6 +47,7 @@ app.UseHttpsRedirection();
 // ⚠️ Importante: CORS debe activarse ANTES de mapear los controladores
 app.UseCors();
 
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseAuthorization();
 app.MapControllers();
 
