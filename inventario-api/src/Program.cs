@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using InventarioAPI.Data; 
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +31,17 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+// Configuración de archivos estáticos para dashboards-inventario
+var dashboardsPath = Path.Combine(app.Environment.ContentRootPath, "dashboards-inventario");
+if (Directory.Exists(dashboardsPath))
+{
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(dashboardsPath),
+        RequestPath = "/dashboards-inventario"
+    });
+}
 app.UseStaticFiles();
 
 // Habilitar Swagger siempre (Desarrollo y Producción/Docker)
