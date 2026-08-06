@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using ProveedoresApp.Models;
 using Npgsql;
+using InventarioAPI.Models;
 
-namespace ProveedoresApp.DAL
+namespace InventarioAPI
 {
     public class ProveedorDAL
     {

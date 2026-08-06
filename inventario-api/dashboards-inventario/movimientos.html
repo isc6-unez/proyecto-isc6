@@ -340,9 +340,9 @@
                         <td class="px-5 py-3.5 font-extrabold ${esEntrada ? 'text-emerald-600' : 'text-amber-600'}">${cantidad}</td>
                         <td class="px-5 py-3.5 text-slate-500">${fecha}</td>
                         <td class="px-5 py-3.5">
-                            <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-slate-900 text-white font-mono text-[10px]">
+                            <a href="http://100.107.111.1:5180?qr=${qrCodigo}" target="_blank" class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-slate-900 hover:bg-blue-600 text-white font-mono text-[10px] transition-colors cursor-pointer">
                                 <i class="fa-solid fa-qrcode text-slate-400"></i> ${qrCodigo}
-                            </span>
+                            </a>
                         </td>
                     `;
                     tbody.appendChild(fila);
