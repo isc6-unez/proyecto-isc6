@@ -9,7 +9,10 @@ namespace InventarioAPI.Data
 
         public DbSet<Categoria> Categorias { get; set; } = null!;
         public DbSet<Material> Materiales { get; set; } = null!;
+        public DbSet<Proveedor> Proveedores { get; set; } = null!;
         public DbSet<Lote> Lotes { get; set; } = null!;
+        public DbSet<Pedido> Pedidos { get; set; } = null!;
+        public DbSet<Picking> Pickings { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
